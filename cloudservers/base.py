@@ -13,10 +13,13 @@ class Manager(object):
     
     def __init__(self, api):
         self.api = api
+        self._list_items = None
 
     def _list(self, url, response_key):
-        resp, body = self.api.client.get(url)
-        return [self.resource_class(self, res) for res in body[response_key]]
+        if not self._list_items:
+            resp, body = self.api.client.get(url)
+            self._list_items = [self.resource_class(self, res) for res in body[response_key]]
+        return self._list_items
     
     def _get(self, url, response_key):
         resp, body = self.api.client.get(url)
